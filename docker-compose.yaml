@@ -1,3 +1,25 @@
 services:
   server:
+    container_name: goserver
     image: gocd/gocd-server:v22.1.0
+    ports:
+      - "8153:8153"
+    networks:
+      gocd:
+        aliases:
+          - goserver
+  client:
+    depends_on:
+      - server
+    container_name: goclient
+    image: gocd/gocd-agent-docker-dind:v22.1.0
+    privileged: true
+    environment:
+      GO_SERVER_URL: http://goserver:8153/go
+    networks:
+      gocd:
+        aliases:
+         - goclient
+
+networks:
+  gocd:
